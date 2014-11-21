@@ -1,6 +1,6 @@
 /*
 SQLyog Community compiled by ZeusAFK v11.0 (32 bit)
-MySQL - 5.6.17 : Database - ventas_deckerstore
+MySQL - 5.6.17 : Database - ventas_xxxxxxxxxx
 *********************************************************************
 */
 
