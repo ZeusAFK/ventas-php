@@ -1,0 +1,234 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	<span class='icon-play2 nav_arrow'></span>
+	<span>Carrito de compras</span>
+</div>
+<br/>
+<h3><span class='icon-cart3'>&nbsp;</span>Carrito de compras</h3>
+<hr/>
+{% if pagedata.products.length > 0 %}
+<div id='cart_content'>
+	<h5><span class='icon-pencil'>&nbsp;</span><strong>Paso 1:</strong>&nbsp;Revise los productos en su carrito</h5>
+	<br/>
+	<div id='cart_items'>
+		<form id='cart_products_form' method='post'>
+		{% for product in pagedata.products %}
+			<div class='product'>
+				<div class='row'>
+					<div class='col-sm-8'>
+						<table border='0' width='100%'>
+							<tr>
+								<td rowspan='2' width='70'>
+									<img class='picture' src='{{ webroot }}images/products/{{ product.picture.file }}' alt='{{ product.picture.title }}' />
+								</td>
+								<td><span class='name'>{{ product.name }}</span></td>
+							</tr>
+							<tr>
+								<td valign='top'><span class='category' onclick="loadCategory('{{ product.category.shortname }}')">{{ product.category.name }}</span></td>
+							</tr>
+						</table>
+					</div>
+					<div class='col-sm-4'>
+						<table border='0' width='100%' class='price_container'>
+							<thead>
+								<tr>
+									<th>Cantidad</th>
+									<th>Precio</th>
+									<th>Quitar</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<input name='{{ product.cartid }}' type='text' class='textbox quantity' value='{{ product.quantity }}' />
+									</td>
+									<td>{{ product.currency.symbol }}. {{ product.price }}</td>
+									<td><span onclick='removeFromCart({{ product.id }}, "{{ product.name }}")' class='icon-remove removeIcon'>&nbsp;</span></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<hr/>
+		{% endfor %}
+		</form>
+		<div class='row'>
+			<div class='col-sm-3'>
+				<div class='blue_button' id='update_cart_button'>
+					<span class='icon-loop'>&nbsp;</span>Guardar y actualizar
+				</div>
+			</div>
+			<div class='col-sm-3 col-sm-offset-6'>
+				<!-- <h5 class='align_right'><strong><span class='icon-coin'>&nbsp;</span>TOTAL: </strong>{{ pagedata.total_price }}</h5> -->
+			</div>
+		</div>
+	</div>
+	<hr/>
+	<h5><span class='icon-location'>&nbsp;</span><strong>Paso 2:</strong>&nbsp;Especifique la informaci&oacute;n de env&iacute;o</h5>
+	<br/>
+	<span class='icon-notification'>&nbsp;</span><i>Seleccione en el mapa la ubicacion donde desea recibir su pedido</i>
+	<br/><br/>
+	<div class='pointer' onclick='navigator.geolocation.getCurrentPosition(userLocationSuccess, userLocationError);'><span class='icon-user'>&nbsp;</span><strong>Detectar mi ubicaci&oacute;n</strong></div>
+	<div class='row'>
+		<div class='col-sm-12'>
+			<div id="map-canvas"></div>
+		</div>
+	</div>
+	<br/>
+	<div class='row'>
+		<div class='col-sm-8'>
+			<span class='icon-location2'>&nbsp;</span><strong>Direcci&oacute;n seleccionada:&nbsp;</strong><span id='currentLocationLabel'>Ninguna, si el mapa no funciona puede especificar su direcci&oacute;n en el cuadro de texto mas abajo.</span>
+		</div>
+		<div class='col-sm-4'>
+			<!-- <input name='saveDirection' type='checkbox' />&nbsp;Guardar esta ubicaci&oacute;n para futuros pedidos -->
+		</div>
+	</div>
+	<br/><br/>
+	<div class='row'>
+		<div class='col-sm-12'>
+			<h5><span class='icon-phone'>&nbsp;</span><strong>Paso 3:</strong>&nbsp;Especifique la informaci&oacute;n de contacto</h5>
+			<br/>
+			<form id='cart_location_form' method='post'>
+				<textarea id='contact' name='contact' class='textbox'></textarea>
+				<input type='hidden' name='latitude' id='latitude' value='0' />
+				<input type='hidden' name='longitude' id='longitude' value='0' />
+				<input type='hidden' name='geocode' id='geocode' value='0' />
+			</form>
+		</div>
+	</div>
+	<br/><br/>
+	<div class='row'>
+		<div class='col-sm-3 col-sm-offset-9'>
+			<div class='green_button' id='checkout_button'>
+				<span class='icon-checkmark'>&nbsp;</span>Realizar pedido
+			</div>
+		</div>
+	</div>
+</div>
+
+	
+<script type='text/javascript'>
+	var geocoder;
+	var map;
+	var infowindow;
+	var marker;
+	var markers = [];
+	var addressSelected = false;
+	
+	$(document).ready(function(){
+		$('#update_cart_button').click(saveCartItems);
+		$('#checkout_button').click(doCheckOut);
+		
+		var script = document.createElement('script');
+		script.type = 'text/javascript';
+		script.src = 'https://maps.googleapis.com/maps/api/js?v=3.exp&callback=initialize';
+		document.body.appendChild(script);
+	});
+	
+	function initialize() {
+		infowindow = new google.maps.InfoWindow();
+		//navigator.geolocation.getCurrentPosition(userLocationSuccess, userLocationError);
+		InitializeMap(new google.maps.LatLng(-17.783328,-63.182180), 14);
+	}
+	
+	function saveCartItems(){
+		NProgress.start();
+		var data = JSON.stringify($('#cart_products_form').serializeObject());
+		doAjaxRequest('updatecart_script', 'post', data, function(response){
+			if(response.result == 1){
+				toastr.success('Carrito actualizado');
+				NProgress.done();
+				showShoppingCartContents();
+			}else{
+				toastr.error('Ocurrio un error al actualizar los productos en el carrito, por favor intentelo nuevamente');
+			}
+		});
+	}
+	
+	function doCheckOut(){
+		if(!addressSelected){
+			toastr.warning('Debe especificar una direccion de envio en el mapa en el paso 2');
+			return;
+		}
+		if($('#contact').val() == ''){
+			toastr.warning('Debe especificar la informacion de contacto en el paso 3');
+			return;
+		}
+		if(confirm('Realizar pedido?')){
+			NProgress.start();
+			var data = JSON.stringify($('#cart_location_form').serializeObject());
+			doAjaxRequest('docheckout_script', 'post', data, function(response){
+				console.log(response);
+				if(response.result == 1){
+					toastr.success('Pedido realizado correctamente');
+					NProgress.done();
+					loadBilling();
+				}else{
+					toastr.error('Ocurrio un error al realizar su pedido, por favor intentelo nuevamente');
+				}
+			});
+		}
+	}
+	
+	function userLocationSuccess(position){
+		var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+		InitializeMap(latlng, 17);
+	}
+	
+	function userLocationError(msg){
+		InitializeMap(new google.maps.LatLng(-17.783328,-63.182180), 14);
+	}
+	
+	function InitializeMap(latlng, zoom){
+		geocoder = new google.maps.Geocoder();
+		var mapOptions = {
+			zoom: zoom,
+			center: latlng,
+			mapTypeId: 'roadmap'
+		}
+		map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+		google.maps.event.addListener(map, 'click', function(e) {
+			updateLocation(e.latLng, map);
+		});
+	}
+	
+	function updateLocation(position, map) {
+		codeLatLng(position.lat(), position.lng());
+	}
+	
+	function codeLatLng(latitude, longitude){
+		for(var i = 0; i < markers.length; i++){
+			markers[i].setMap(null);
+		}
+		markers = [];
+		var latlng = new google.maps.LatLng(latitude, longitude);
+		geocoder.geocode({'latLng': latlng}, function(results, status){
+			if(status == google.maps.GeocoderStatus.OK){
+				if(results[1]){
+					marker = new google.maps.Marker({
+						position: latlng,
+						map: map
+					});
+					markers.push(marker);
+					infowindow.setContent(results[0].formatted_address);
+					$('#currentLocationLabel').text(results[0].formatted_address);
+					infowindow.open(map, marker);
+					$('#latitude').val(latitude);
+					$('#longitude').val(longitude);
+					$('#geocode').val(results[0].formatted_address);
+					addressSelected = true;
+				}else{
+					alert('Seleccione una ubicacion valida');
+				}
+			}else{
+			  alert('Error al obtener informacion de la ubicacion seleccionada: ' + status);
+			}
+		});
+	}
+</script>
+{% else %}
+	<h5>No tiene ningun producto agregado al carrito</h5>
+{% endif %}

@@ -1,0 +1,48 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	<span class='icon-play2 nav_arrow'></span>
+	<span>Novedades</span>
+</div>
+<br/>
+<h3><span class='icon-flag'>&nbsp;</span>Novedades</h3>
+<hr/>
+<br/>
+<div id='shop_content'>
+	<div class='row'>
+		<div class='col-sm-12'>
+			<div id='category_products'>
+				<div class='row'>
+				{% for product in pagedata.newsProducts %}
+					<div class='col-sm-3'>
+						<div class='product'>
+							<div class='cover' style="background-image: url('{{ webroot }}images/products/{{ product.picture.file }}')">
+								<div class='actions pointer' onclick="loadProduct('{{ product.shortname }}')">
+									<div class='top'></div>
+									<div class='title'>{{ product.name }}</div>
+									<div class='green_button button_cart' onclick="{% if pagedata.logged == 0 %}aunthenticateFirst(){% else %}addToCart({{ product.id }}){% endif %}">
+										<span class='icon-cart3'>&nbsp;</span>Agregar
+									</div>
+									<div class='bottom'></div>
+								</div>
+							</div>
+							<div class='description'>
+								<p class='price'>{{ product.currency.symbol }} {{ product.price }}</p>
+								<p class='category' onclick="loadCategory('{{ product.category.shortname }}')">{{ product.category.name }}</p>
+							</div>
+						</div>
+						<br/>
+						<div class='content_spacer'><br/></div>
+					</div>
+				{% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('#news_link').addClass('On');
+	});
+</script>

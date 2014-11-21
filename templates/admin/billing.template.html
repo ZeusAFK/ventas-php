@@ -1,0 +1,57 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	<span class='icon-play2 nav_arrow'></span>
+	<span>Ordenes</span>
+</div>
+<br/>
+<h3><span class='icon-tags'>&nbsp;</span>Lista de ordenes realizadas</h3>
+<hr/>
+<div id='orders_container'>
+{% for order in pagedata.orders %}
+	<div class='order status_{{ order.status }}'>
+		<div class='row'>
+			<div class='col-sm-10'>
+				<h5>
+					<strong><span class='icon-cart3'>&nbsp;</span>[{{ order.date }}]</strong> Creada orden numero <strong>{{ order.id }}</strong> con los siguientes articulos:
+				</h5>
+			</div>
+			<div class='col-sm-2 align_right'>
+				<div class='blue_button'>
+					<span class='icon-remove'>&nbsp;</span>Eliminar</span>
+				</div>
+			</div>
+		</div>
+		<hr/>
+		<ul class='products_container'>
+			{% for product in order.products %}
+				<li>
+					<span class='product' onclick="loadProduct('{{ product.shortname }}')">
+						<span class='icon-tag'>&nbsp;</span>
+						{{ product.name }} x {{ product.quantity }}
+					</span>
+				</li>
+			{% endfor %}
+		</ul>
+		<hr/>
+		<p>
+			<strong>Estado:</strong>&nbsp;&nbsp;
+			{% if order.status == 1 %}
+				<span class='icon-checkmark'>&nbsp;</span>
+				Registrada, esperando aprobaci&oacute;n
+			{% elseif order.status == 3 %}
+				<span class='icon-warning'>&nbsp;</span>
+				Rechazada, leer la descripci&oacute;n
+			{% elseif order.status == 5 %}
+				<span class='icon-checkmark-circle'>&nbsp;</span>
+				Compra realizada, pedido completado
+			{% endif %}
+		</p>
+		{% if order.description != null && order.description != '' %}
+			<p><span class='icon-bubbles'>&nbsp;</span>{{ order.description }}</p>
+		{% endif %}
+	</div>
+	<br/>
+{% endfor %}
+</div>

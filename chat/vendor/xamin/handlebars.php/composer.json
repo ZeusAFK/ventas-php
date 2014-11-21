@@ -1,0 +1,31 @@
+{
+    "name": "xamin/handlebars.php",
+    "description": "Handlebars processor for php",
+    "homepage": "https://github.com/XaminProject/handlebars.php",
+    "type": "library",
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "fzerorubigd",
+            "email": "fzerorubigd@gmail.com"
+        },
+        {
+            "name": "Behrooz Shabani (everplays)",
+            "email": "everplays@gmail.com"
+        }
+    ],
+    "require": {
+
+    },
+    "require-dev": {
+        "phpunit/phpunit": "@stable",
+        "squizlabs/php_codesniffer": "@stable"
+    },
+    "autoload": {
+        "psr-0": {
+            "Handlebars": "src/"
+        }
+    }
+}

@@ -1,0 +1,70 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	{% if pagedata.product.category.parent.id > 0 %}
+		<span class='icon-play2 nav_arrow'></span>
+		<span class='nav_element' onclick="loadCategory('{{ pagedata.product.category.parent.shortname }}');">{{ pagedata.product.category.parent.name }}</span>
+	{% endif %}
+	<span class='icon-play2 nav_arrow'></span>
+	<span class='nav_element' onclick="loadCategory('{{ pagedata.product.category.shortname }}');">{{ pagedata.product.category.name }}</span>
+	<span class='icon-play2 nav_arrow'></span>
+	<span>{{ pagedata.product.name }}</span>
+</div>
+<br/>
+<h3>{{ pagedata.product.name }}</h3>
+<hr/>
+<div id='product'>
+	<div class='row'>
+		<div class='col-sm-7'>
+			<div id='picture_container'>
+				<img id='main_image' src='{{ webroot }}images/products/{{ pagedata.product.pictures[0].file }}' />
+			</div>
+			<br/><br/>
+		</div>
+		<div class='col-sm-5'>
+			<div id='price'>{{ pagedata.product.currency.symbol }} {{ pagedata.product.price }}</div>
+			<div id='button_cart' class='green_button' onclick="{% if pagedata.logged == 0 %}aunthenticateFirst(){% else %}addToCart({{ pagedata.product.id }}){% endif %}">
+				<span class='icon-cart3'>&nbsp;</span>Agregar al carrito
+			</div>
+			<br/>
+			<div id='pictures'>
+				{% for picture in pagedata.product.pictures %}
+					<div class='picture'>
+						<img class='image' src='{{ webroot }}images/products/{{ picture.file }} ' onclick='changePicture(this)'/>
+					</div>
+				{% endfor %}
+			</div>
+			<br/>
+			<p>
+				{{ pagedata.product.description|raw }}
+			</p>
+		</div>
+	</div>
+	<div class='row'>
+		<div class='col-sm-7'>
+			<div id='details_container'>
+				<h4 class='title'><strong>Detalles del producto</strong></h4>
+				<br/>
+				<div id='details'>
+					{{ pagedata.product.details|raw }}
+				</div>
+			</div>
+		</div>
+		<div class='col-sm-5'>
+			<div id='shipping_info'>
+				<h4 class='title'><strong>Informaci&oacute;n sobre el envio</strong></h4>
+				<br/>
+				<div id='delivery'>
+					{{ pagedata.product.delivery|raw }}
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr/>
+</div>
+<script type='text/javascript'>
+	function changePicture(image){
+		$('#main_image').attr('src', $(image).attr('src'));
+	}
+</script>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="description" content="{{ description }}" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="author" content="ZeusAFK Technologies" />
+		<title>{{ title }} :: {{ version }}</title>
+		<style>
+			body{background-color:#f8f8f8;background-image:url("{{ webroot }}images/bg.png") !important;background-repeat:repeat;font-size:12px}
+			#header_content{display:none}
+			#content .loading_header{color:#7c7699;text-align:center;}
+			#content .loading_header .title_icon{font-size:3em !important}
+		</style>
+		<link rel="shortcut icon" href="{{ webroot }}favicon.ico" type="image/x-icon">
+		<link rel="icon" href="{{ webroot }}favicon.ico" type="image/x-icon">
+	</head>
+	<body>
+		<div class='container-fluid' id='header_container'>
+			<div class='row' id='header'>
+				<div class='col-sm-12'>
+					<div class='container'>
+						<div class='row' id='header_content'>
+							<div class='col-lg-4'>
+								<div id='logo_container' onclick="redirectToUrl('');">
+									<img id="logo" alt="" src="{{ webroot }}images/logo.jpg" />
+								</div>
+								<div id='navigation_container'>
+									<ul id='nav_list'>
+										<li class='navItem parentNav' id='shop_link'>
+											<div class='nav_button' onclick="redirectToUrl('');">
+												<span class='icon-home'>&nbsp;</span>Tienda
+											</div>
+										</li>
+										<li class='navItem parentNav' id='news_link'>
+											<div class='nav_button' onclick='productsNews();'>
+												<span class='icon-flag'>&nbsp;</span>Novedades
+											</div>
+										</li>
+										<li class='navItem parentNav' id='offers_link'>
+											<div class='nav_button' onclick='productOffers();'>
+												<span class='icon-star'>&nbsp;</span>Ofertas
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+							<div class='col-lg-4 col-lg-push-4'>
+								<div id='user_controls_container'>
+									<div id='login_button' class='blue_button' onclick='showLoginPage()'><span class='icon-user'>&nbsp;</span>Ingresa o Registrate</div>
+								</div>
+							</div>
+							<div class='col-lg-4 col-lg-pull-4'>
+								<div id='search_container'>
+									<div id='search_text_container'>
+										<input id='search_text' type='text' class='textbox' placeholder='Buscar producto...' />
+									</div>
+									<div id='search_button'>
+										&nbsp;&nbsp;<span class='icon-bubble2'>&nbsp;</span>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br/><br/><br/>
+		{% if siteadmin == 0 %}
+			<br/><br/>
+		{% endif %}
+		<div class='content_spacer'><br/><br/><br/><br/></div>
+		<div class='container-fluid'>
+			<div class='row'>
+				<div class='col-sm-12'>
+					<div class='container'>
+						{% if siteadmin == 1 %}
+							<div class='row'>
+								<div class='col-sm-12 align_center'>
+									<div id='cart'>
+										{% if show_admin_navigation == 0 %}
+											<h5><span class='green pointer' onclick="AdminNavigation({{ show_admin_navigation }});"><span class='icon-pencil'>&nbsp;</span><strong>Activar edici&oacute;n</strong></span></h5>
+										{% else %}
+											<h5><span class='red pointer' onclick="AdminNavigation({{ show_admin_navigation }});"><span class='icon-pencil'>&nbsp;</span><strong>Desactivar edici&oacute;n</strong></span></h5>
+										{% endif %}
+									</div>
+								</div>
+							</div>
+							<br/>
+						{% endif %}
+						<div class='row'>
+							<div class='col-sm-12'>
+								<div id='content'>
+									<h2 class='loading_header'>
+										<span class='icon-cloud-download title_icon'></span>
+										<br/>
+										Preparando la tienda para que todo se vea asombroso...
+									</h2>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<script type='text/javascript'>
+			var webroot = '{{ webroot }}';
+			var pathroot = '{{ pathroot }}';
+			var template_folder = '{% if show_admin_navigation == 1 %}templates/admin/{% else %}templates/{% endif %}'
+		</script>
+		<script type='text/javascript' src='{{ webroot }}js/vendor/jquery-1.11.0.min.js'></script>
+		<script type='text/javascript' src='{{ webroot }}js/vendor/underscore-min.js'></script>
+		<script type='text/javascript' src='{{ webroot }}js/vendor/backbone-min.js'></script>
+		<script type='text/javascript' src='{{ webroot }}js/vendor/swig-1.3.2.min.js'></script>
+		<script type='text/javascript' src='{{ webroot }}js/vendor/nprogress.min.js'></script>
+		<script type='text/javascript' src='{{ webroot }}js/vendor/toastr.min.js'></script>
+		{% if siteadmin == 1 %}
+			<script type="text/javascript" src="{{ webroot }}plugins/ckeditor/ckeditor.js"></script>
+			<script src="{{ webroot }}js/vendor/jquery.ui.widget.min.js"></script>
+			<script src="{{ webroot }}js/vendor/jquery.iframe-transport.min.js"></script>
+			<script src="{{ webroot }}js/vendor/jquery.fileupload.min.js"></script>
+			<script src="{{ webroot }}js/vendor/jquery.fileupload-process.js"></script>
+			<script src="{{ webroot }}js/vendor/jquery.fileupload-validate.js"></script>
+			<script type='text/javascript' src='{{ webroot }}js/admin.js'></script>
+		{% endif %}
+		<script type='text/javascript' src='{{ webroot }}js/main.js'></script>
+		<script type='text/javascript'>
+			$(document).ready(function(){
+				$('#header_content').fadeIn();
+			});
+		</script>
+	</body>
+</html>
+<link type='text/css' rel="stylesheet" href="{{ webroot }}css/normalize.min.css" />
+<link type='text/css' rel="stylesheet" href="{{ webroot }}css/bootstrap.min.css" />
+<link type='text/css' rel="stylesheet" href="{{ webroot }}css/nprogress.min.css" />
+<link type='text/css' rel="stylesheet" href="{{ webroot }}css/toastr.min.css" />
+<link type='text/css' rel="stylesheet" href="{{ webroot }}css/jquery.bxslider.min.css" />
+<link type='text/css' rel="stylesheet" href="{{ webroot }}css/style.css" />

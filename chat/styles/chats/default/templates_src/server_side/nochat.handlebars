@@ -1,0 +1,19 @@
+{{#extends "_layout"}}
+    {{#override "pageTitle"}}{{l10n "Error"}}{{/override}}
+
+    {{#override "buttons"}}
+        <a href="javascript:window.close();" title="{{l10n 'Close...'}}">
+            <img class="tpl-image iclosewin" src="{{asset "@CurrentStyle/images/free.gif"}}" alt="{{l10n 'Close...'}}" />
+        </a>
+    {{/override}}
+
+    {{#override "message"}}<p>{{l10n "Your web browser is not fully supported. \nPlease, use one of the following web browsers:"}}</p>{{/override}}
+
+    {{#override "content"}}
+        <ul>
+            {{#each supportedBrowsers}}
+            <li>{{this}}</li>
+            {{/each}}
+        </ul>
+    {{/override}}
+{{/extends}}

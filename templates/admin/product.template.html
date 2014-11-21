@@ -1,0 +1,188 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	{% if pagedata.product.category.parent.id > 0 %}
+		<span class='icon-play2 nav_arrow'></span>
+		<span class='nav_element' onclick="loadCategory('{{ pagedata.product.category.parent.shortname }}');">{{ pagedata.product.category.parent.name }}</span>
+	{% endif %}
+	<span class='icon-play2 nav_arrow'></span>
+	<span class='nav_element' onclick="loadCategory('{{ pagedata.product.category.shortname }}');">{{ pagedata.product.category.name }}</span>
+	<span class='icon-play2 nav_arrow'></span>
+	<span>{{ pagedata.product.name }}</span>
+</div>
+<br/>
+<form id='product_form' method='post'>
+<h5><strong>Nombre:</strong></h5>
+<input type='text' class='textbox' name='productName' id='productName' value='{{ pagedata.product.name }}' />
+<hr/>
+<div id='product'>
+	<div class='row'>
+		<div class='col-sm-7'>
+			<div id='picture_container'>
+				{% if pagedata.product.pictures.length > 0 %}
+					<img id='main_image' src='{{ webroot }}images/products/{{ pagedata.product.pictures[0].file }}' />
+				{% else %}
+					<img id='main_image' src='{{ webroot }}images/products/submenu_image_gradient.png' />
+				{% endif %}
+			</div>
+			<br/><br/>
+		</div>
+		<div class='col-sm-5'>
+			<h5><strong>Precio:</strong></h5>
+			<input name='productPrice' type='text' class='textbox' value='{{ pagedata.product.price }}' />
+			<hr/>
+			<div id='btn_update_product' class='green_button'>
+				<span class='icon-checkmark'>&nbsp;</span>Guardar cambios
+			</div>
+			<hr/>
+			<div onclick="removeProduct({{ pagedata.product.id }}, '{{ pagedata.product.name }}', '{{ pagedata.product.category.shortname }}')" class='blue_button'>
+				<span class='icon-remove'>&nbsp;</span>Eliminar producto
+			</div>
+			<hr/>
+			<span id='change_button' class='pointer blue'>
+				<span class='icon-plus'>&nbsp;</span><span class='icon-image'>&nbsp;</span>Agregar imagen (Max. 5 MB)
+			</span>
+			<input id='fileupload' class='display_none' type="file" name="image" />
+			<br/><br/>
+			<div id="progress" class="progress display_none">
+				<div id="progress-bar" class="progress-bar progress-bar-success"></div>
+			</div>
+			<div id='pictures'>
+				{% for picture in pagedata.product.pictures %}
+					{% if picture != null %}
+						<div class='picture'>
+							<img class='image' src='{{ webroot }}images/products/{{ picture.file }} ' onclick='changePicture(this)'/>
+						</div>
+					{% endif %}
+				{% endfor %}
+			</div>
+			<br/>
+			<h5><strong>Descripci&oacute;n:</strong></h5>
+			<textarea name='productDescription' class='textbox'>{{ pagedata.product.description }}</textarea>
+		</div>
+	</div>
+	<br/><br/>
+	<div class='row'>
+		<div class='col-sm-7'>
+			<div id='details_container'>
+				<h4 class='title'><strong>Detalles del producto</strong></h4>
+				<br/>
+				<div id='details'>
+					<textarea name='productDetails' class='textbox'>{{ pagedata.product.details|raw }}</textarea>
+				</div>
+			</div>
+		</div>
+		<div class='col-sm-5'>
+			<div id='shipping_info'>
+				<h4 class='title'><strong>Informaci&oacute;n sobre el envio</strong></h4>
+				<br/>
+				<div id='delivery'>
+					<textarea name='productDelivery' class='textbox'>{{ pagedata.product.delivery|raw }}</textarea>
+				</div>
+			</div>
+		</div>
+	</div>
+	<hr/>
+</div>
+</form>
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('#change_button').on('click', function(){
+			document.getElementById('fileupload').click();
+		});
+		
+		$('#btn_update_product').click(updateProduct);
+		
+		var tools = [
+			['Font', 'FontSize'],
+			['TextColor', 'BGColor'],
+			['Bold', 'Italic', 'Underline', '-', 'NumberedList', 'BulletedList'],
+			['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+			['Cut', 'Copy', 'Paste', 'Preview'],
+			['Undo', 'Redo', '-', 'RemoveFormat'],
+			['Table', 'HorizontalRule', 'SpecialChar']
+		]
+
+		function bindTextEditor(control) {
+			CKEDITOR.replace(control, {
+				// Define the toolbar groups as it is a more accessible solution.
+				toolbarGroups: [
+					{"name":"basicstyles","groups":["basicstyles"]},
+					{"name":"links","groups":["links"]},
+					{"name":"paragraph","groups":["list","blocks"]},
+					{"name":"document","groups":["mode"]},
+					{"name":"insert","groups":["insert"]},
+					{"name":"styles","groups":["styles"]},
+					{"name":"about","groups":["about"]}
+				],
+				// Remove the redundant buttons from toolbar groups defined above.
+				removeButtons: 'Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar'
+			});
+		}
+		
+		bindTextEditor('productDescription');
+		bindTextEditor('productDetails');
+		bindTextEditor('productDelivery');
+		
+		$(function () {
+			'use strict';
+			
+			$('#fileupload').fileupload({
+				url: '{{ pagedata.webroot }}product_image_add_script/{{ pagedata.product.id }}',
+				dataType: 'json',
+				acceptFileTypes: /(\.|\/)(jpg|png)$/i,
+				maxFileSize: 5242880 // 5 MB
+			}).on('fileuploadadd', function (e, data) {
+				$('#progress').fadeIn();
+			}).on('fileuploadprogressall', function (e, data) {
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				$('#progress-bar').css('width', + progress + '%');
+			}).on('fileuploadprocessalways', function (e, data) {
+				if (data.files[data.index].error) {
+					$('#progress').css('display', 'none');
+					toastr.warning(data.files[data.index].error);
+				}
+			}).on('fileuploaddone', function (e, data) {
+				if(data.result.result == 1){
+					toastr.success('Imagen agregada')
+				}else{
+					toastr.error('Error al agregar la imagen ' + data.result.error);
+				}
+				$('#progress-bar').css('width', '100%');
+				$('#pictures').append($("<div class='picture' />").append($("<img class='image' onclick='changePicture(this)' />").attr('src', '{{ pagedata.webroot }}/images/products/' + data.result.filename)));
+				$('#main_image').attr('src', '{{ pagedata.webroot }}/images/products/' + data.result.filename);
+			}).on('fileuploadfail', function (e, data) {
+				console.log(data);
+				$.each(data.files, function (index, file) {
+					console.log(file);
+				});
+			});
+		});
+	});
+	
+	function updateProduct(){
+		var productName = $('#productName').val();
+		if(productName.length > 0){
+			for(instance in CKEDITOR.instances){
+				CKEDITOR.instances[instance].updateElement();
+			}
+			var data = JSON.stringify($('#product_form').serializeObject());
+			doAjaxRequest('product_update_script/{{ pagedata.product.id }}', 'post', data, function(response){
+				console.log(response);
+				if(response.result == 1){
+					toastr.success(productName + ' actualizado');
+					loadProduct(response.alias);
+				}else{
+					toastr.error('Error al actualizar el producto, por favor intentelo nuevamente');
+				}
+			});
+		}else{
+			toastr.warning('Debe especificar un titulo para el producto');
+		}
+	}
+	
+	function changePicture(image){
+		$('#main_image').attr('src', $(image).attr('src'));
+	}
+</script>

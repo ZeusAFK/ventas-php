@@ -1,0 +1,42 @@
+# IMPORTANT: Before install mibew copy this file to config.yml and fill it with
+# your own settings!
+
+
+# MySQL Database parameters
+database:
+    host: "localhost"
+    port: 3306
+    db: "ventas_chat"
+    login: "root"
+    pass: ""
+    tables_prefix: "ventas_"
+    use_persistent_connection: false
+
+# Mailbox
+mailbox: mibew@yourdomain.com
+
+# Locales
+## Native name will be used in this locale
+home_locale: es
+## If user does not provide known lang
+default_locale: es
+
+# A timezone to use. Leave this value empty to use the default timezone from the
+# system settings. For the details about available timezones see
+# http://php.net/manual/en/timezones.php
+timezone: "America/La_Paz"
+
+# Plugins
+plugins: []
+
+## Exapmle of plugins configuration
+# plugins:
+#     -
+#         name: "VendorName:PluginName"
+#         config:
+#             weight: 100
+#             some_configurable_value: value
+#     -
+#         name: "VendorName:AnotherPluginName"
+#         config:
+#             very_important_value: "$3.50"

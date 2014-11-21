@@ -1,0 +1,28 @@
+<div class='row'>
+	<div class='col-sm-12'>
+		<form id='login_form' method='post'>
+			<label for='user'>Usuario:</label>
+			<input type='text' name='user' id='user' />
+			<label for='password'>Password:</label>
+			<input type='password' name='password' id='password' />
+			<button id='login_button'>Iniciar sesion</button>
+		</form>
+	</div>
+</div>
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('#login_button').on('click', function(){
+			var datos = $('#login_form').serializeObject();
+			datos = JSON.stringify(datos);
+			
+			doAjaxRequest('loginrequest', 'post', datos, function(respuesta){
+				if(respuesta == 1){
+					toastr.success('Login correcto, redireccionando...');
+				}else{
+					toastr.warning('Usuario o clave incorrectos');
+				}
+			});
+			return false;
+		});
+	});
+</script>

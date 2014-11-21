@@ -1,0 +1,30 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	<span class='icon-play2 nav_arrow'></span>
+	<span>Autenticaci&oacute;n</span>
+</div>
+<br/>
+<h3><span class='icon-user'>&nbsp;</span>Conectate con alguno de los siguientes servicios:</h3>
+<hr/>
+<div class='row'>
+	<div class='col-sm-12'>
+		<div id='login_providers'>
+			{% for provider in pagedata.providers %}
+				<div class='provider {{ provider.style }}'>
+					<strong><span class='{{ provider.icon }}'>&nbsp;</span>{{ provider.name }}:</strong> <i>{{ provider.description }}</i>
+					<div class='connect_button'>
+						<a href='{{ provider.auth_url }}'>
+							<img src='{{ webroot }}images/providers/{{ provider.image }}' />
+						</a>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+</div>
+<br/><br/>
+<p>
+	<span class='icon-notification'>&nbsp;</span>Al conectarte aceptas nuestros <a href='tou'>terminos y condiciones del servicio</a>
+</p>

@@ -1,0 +1,91 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	{% if pagedata.category.parentId > 0 %}
+		<span class='icon-play2 nav_arrow'></span>
+		<span class='nav_element' onclick="loadCategory('{{ pagedata.category.parentShortname }}');">{{ pagedata.category.parentName }}</span>
+	{% endif %}
+	<span class='icon-play2 nav_arrow'></span>
+	<span>{{ pagedata.category.name }}</span>
+</div>
+<br/>
+<h3>{{ pagedata.category.name }}</h3>
+<hr/>
+<div class='row'>
+	<div class='col-sm-9'>
+		<div class='row'>
+			<div class='col-sm-12'>
+				{% if pagedata.category.subcategories.length > 0 %}
+					<div id='category_description'>
+						<div id='category_subcategories'>
+							{% if pagedata.category.description != null %}
+								{{ pagedata.category.description|raw }}
+							{% endif %}
+							<br/><br/>
+							<ul>
+								<li>
+									<ul>
+										{% for subcategory in pagedata.category.subcategories %}
+											<li>
+												<span class='category_element' onclick="loadCategory('{{ subcategory.shortname }}');" title='{{ subcategory.description }}'>
+													<span class='icon-play2 arrow_small'>&nbsp;</span>{{ subcategory.name }}
+												</span>
+											</li>
+										{% endfor %}
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				{% else %}
+					{% if pagedata.category.description != null %}
+						{{ pagedata.category.description|raw }}
+					{% endif %}
+				{% endif %}
+			</div>
+		</div>
+		<br/><br/>
+		<div id='category_products'>
+			{% for product in pagedata.category.products %}
+				{% if loop.first %}
+					<div class='row'>
+				{% endif %}
+						<div class='col-sm-4'>
+							<div class='product'>
+								<div class='cover' style="background-image: url('{{ webroot }}images/products/{{ product.picture.file }}')">
+									<div class='actions pointer' onclick="loadProduct('{{ product.shortname }}')">
+										<div class='top'></div>
+										<div class='title'>{{ product.name }}</div>
+										<hr/>
+										<div class='green_button button_cart' onclick="{% if pagedata.logged == 0 %}aunthenticateFirst(){% else %}addToCart({{ product.id }}){% endif %}">
+											<span class='icon-cart3'>&nbsp;</span>Agregar
+										</div>
+										<div class='bottom'></div>
+									</div>
+								</div>
+								<div class='description'>
+									<p class='price'>{{ product.currency.symbol }} {{ product.price }}</p>
+									<p class='category' onclick="loadCategory('{{ product.category.shortname }}')">{{ product.category.name }}</p>
+								</div>
+							</div>
+						</div>
+				{% if loop.last %}
+					</div>
+				{% elseif loop.index % 3 == 0 %}
+					</div>
+					<br/>
+					<div class='row'>
+				{% endif %}
+			{% endfor %}
+		</div>
+		<hr/>
+	</div>
+	<div class='col-sm-3'>
+		{% if pagedata.category.picture != null && pagedata.category.picture != '' %}
+			<div id='category_image'>
+				<img src='{{ pagedata.webroot }}/images/category/{{ pagedata.category.picture }}' alt='' />
+			</div>
+		{% endif %}
+	</div>
+</div>

@@ -1,0 +1,4 @@
+body{background-color:#f8f8f8;background-image:url("../images/bg.png") !important;background-repeat:repeat;font-size:12px}
+#header_content{display:none}
+#content .loading_header{color:#7c7699;text-align:center;}
+#content .loading_header .title_icon{font-size:3em !important}

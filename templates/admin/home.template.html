@@ -1,0 +1,181 @@
+<div id='shop_content'>
+	<div class='row'>
+		<div class='col-sm-9'>
+			<ul class="main_slider">
+				{% for element in pagedata.slider %}
+					<li>
+						<input id='fileupload-{{ element.id }}' class='display_none' type="file" name="image" />
+						<div id='slider-element-{{ element.id }}' class='slider_element' style="background-image: url('{{ pagedata.webroot }}images/slider/{{ element.filename }}')">
+							<div class='blue_button change_button' onclick='updateSliderElementPicture({{ element.id }})'>
+								<span class='icon-image'>&nbsp;</span>Cambiar imagen (Max. 5 MB)
+							</div>
+						</div>
+					</li>
+				{% endfor %}
+			</ul>
+			<div id="progress" class="progress">
+				<div id="progress-bar" class="progress-bar progress-bar-success"></div>
+			</div>
+			{% if pagedata.topViewerProducts.length > 0 %}
+			<h4>Productos mas populares</h4>
+			<hr/>
+			<div id='category_products'>
+				<div class='row'>
+				{% for product in pagedata.topViewerProducts %}
+					{% if loop.index <= 4 %}
+						<div class='col-sm-3'>
+							<div class='product'>
+								<div class='cover' style="background-image: url('{{ webroot }}images/products/{{ product.picture.file }}')">
+									<div class='actions'>
+										<div class='top'></div>
+										<div class='title' onclick="loadProduct('{{ product.shortname }}')">{{ product.name }}</div>
+										<div class='green_button button_cart' onclick="{% if pagedata.logged == 0 %}aunthenticateFirst(){% else %}addToCart({{ product.id }}){% endif %}">
+											<span class='icon-cart3'>&nbsp;</span>Agregar
+										</div>
+										<div class='bottom'></div>
+									</div>
+								</div>
+								<div class='description'>
+									<p class='price'>{{ product.currency.symbol }} {{ product.price }}</p>
+									<p class='category' onclick="loadCategory('{{ product.category.shortname }}')">{{ product.category.name }}</p>
+								</div>
+							</div>
+							<div class='content_spacer'><br/></div>
+						</div>
+					{% endif %}
+				{% endfor %}
+				</div>
+			</div>
+			{% endif %}
+			<br/><br/>
+		</div>
+		<div class='col-sm-3'>
+			<h5><strong>Crear categoria</strong></h5>
+			<div class='row'>
+				<div class='col-sm-12'>
+					<input type='text' name='category_name' id='category_name' class='textbox' />
+				</div>
+			</div>
+			<br/>
+			<div class='row'>
+				<div class='col-sm-12'>
+					<div class='green_button' id='add_category_button'>
+						<span class='category_element'><span class='icon-plus'>&nbsp;</span>Crear</span>
+					</div>
+				</div>
+			</div>
+			<hr/>
+			<div id='menu_left'>
+				<ul>
+					{% for category in pagedata.categories %}
+						<li onclick='displaySubMenu(this);'>
+							<div class='menu_element' title='{{ category.description }}'>
+								<span class='icon-play2 arrow_small'>&nbsp;</span><span class='menu_name' onclick="loadCategory('{{ category.shortname }}');">{{ category.name }}</span>
+							</div>
+							{% if category.subcategories.length > 0 %}
+								<div class='sub_menu {% if loop.first %}display{% endif %}'>
+									<ul>
+										{% for subcategory in category.subcategories %}
+											<li>
+												<div class='submenu_element' onclick="loadCategory('{{ subcategory.shortname }}');" title='{{ subcategory.description }}'>
+													<span class='icon-play2 arrow_small'>&nbsp;</span>{{ subcategory.name }}
+												</div>
+											</li>
+										{% endfor %}
+									</ul>
+								</div>
+								<div class='category_image {% if loop.first %}display{% endif %}' style="background-image: url('{{ pagedata.webroot }}/images/category/{{ category.picture }}');">
+									<img src='{{ pagedata.webroot }}/images/category/submenu_image_gradient.png' alt='' width='288' height='288' />
+								</div>
+							{% endif %}
+						</li>
+					{% endfor %}
+				</ul>
+				<hr/>
+				<ul>
+					<li>
+						<div class='menu_element' onclick='productsNews();'>
+							<span class='icon-flag arrow_small'>&nbsp;</span>Novedades
+						</div>
+					</li>
+					<li>
+						<div class='menu_element' onclick='productOffers();'>
+							<span class='icon-star arrow_small'>&nbsp;</span>Ofertas
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+<script type='text/javascript' src='{{ pagedata.webroot }}js/vendor/jquery.bxslider.min.js'></script>
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('.main_slider').bxSlider({
+			adaptiveHeight: true,
+			autoHover: false,
+			infiniteLoop: false,
+			auto: false
+		});
+		$('#shop_link').addClass('On');
+		
+		$('#add_category_button').click(createCategory);
+		
+		{% for element in pagedata.slider %}
+			$(function () {
+				'use strict';
+				
+				$('#fileupload-{{ element.id }}').fileupload({
+					url: '{{ pagedata.webroot }}slider_image_change_script/{{ element.id }}',
+					dataType: 'json',
+					acceptFileTypes: /(\.|\/)(jpg|png)$/i,
+					maxFileSize: 5242880 // 5 MB
+				}).on('fileuploadadd', function (e, data) {
+					$('#progress').fadeIn();
+				}).on('fileuploadprogressall', function (e, data) {
+					var progress = parseInt(data.loaded / data.total * 100, 10);
+					$('#progress-bar').css('width', + progress + '%');
+				}).on('fileuploadprocessalways', function (e, data) {
+					if (data.files[data.index].error) {
+						$('#progress').css('display', 'none');
+						toastr.warning(data.files[data.index].error);
+					}
+				}).on('fileuploaddone', function (e, data) {
+					if(data.result.result == 1){
+						toastr.success('Imagen actualizada');
+						$('#slider-element-{{ element.id }}').css('background-image', "url('{{ pagedata.webroot }}images/slider/" + data.result.filename + "')");
+					}else{
+						toastr.error('Error al actualizar la imagen ' + data.result.error);
+					}
+					$('#progress-bar').css('width', '100%');
+				}).on('fileuploadfail', function (e, data) {
+					console.log(data);
+				});
+			});
+		{% endfor %}
+	});
+	function displaySubMenu(menu){
+		$('.sub_menu').css('display', 'none');
+		$('.category_image').css('display', 'none');
+		$(menu).find('.sub_menu').fadeIn();
+		$(menu).find('.category_image').fadeIn();
+	}
+	function createCategory(){
+		var categoryName = $('#category_name').val();
+		if(categoryName.length > 0){
+			doAjaxRequest('category_add_script/0', 'post', categoryName, function(response){
+				if(response.result == 1){
+					toastr.success(categoryName + ' creado');
+					loadCategory(response.alias);
+				}else{
+					toastr.error('Error al crear la categoria, por favor intentelo nuevamente');
+				}
+			});
+		}else{
+			toastr.warning('Debe especificar un titulo para la categoria');
+		}
+	}
+	function updateSliderElementPicture(id){
+		document.getElementById('fileupload-' + id).click();
+	}
+</script>

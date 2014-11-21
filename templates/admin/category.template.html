@@ -1,0 +1,284 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	{% if pagedata.category.parentId > 0 %}
+		<span class='icon-play2 nav_arrow'></span>
+		<span class='nav_element' onclick="loadCategory('{{ pagedata.category.parentShortname }}');">{{ pagedata.category.parentName }}</span>
+	{% endif %}
+	<span class='icon-play2 nav_arrow'></span>
+	<span>{{ pagedata.category.name }}</span>
+</div>
+<br/>
+<form id='categoryForm' method='post'>
+<h5><strong>Titulo:</strong></h5>
+<input id='categoryName' name='categoryName' type='text' class='textbox' value='{{ pagedata.category.name }}' />
+<hr/>
+<div class='row'>
+	<div class='col-sm-9'>
+		<div class='row'>
+			<div class='col-sm-12'>
+				{% if pagedata.category.subcategories.length > 0 %}
+					<div id='category_description'>
+						<div id='category_subcategories'>
+							<h5><strong>Descripci&oacute;n:</strong></h5>
+							<textarea name='categoryDescription' class='textbox align_left'>{{ pagedata.category.description }}</textarea>
+							<br/><br/>
+							<ul>
+								<li>
+									<ul>
+										{% for subcategory in pagedata.category.subcategories %}
+											<li>
+												<span class='category_element' onclick="loadCategory('{{ subcategory.shortname }}');" title='{{ subcategory.description }}'>
+													<span class='icon-play2 arrow_small'>&nbsp;</span>{{ subcategory.name }}
+												</span>
+											</li>
+										{% endfor %}
+									</ul>
+								</li>
+							</ul>
+						</div>
+					</div>
+				{% else %}
+					<h5><strong>Descripci&oacute;n:</strong></h5>
+					<textarea name='categoryDescription' class='textbox align_left'>{{ pagedata.category.description }}</textarea>
+				{% endif %}
+				{% if pagedata.category.parentId == null %}
+				<hr/>
+				<h5><strong>Crear sub categoria</strong></h5>
+				<div class='row'>
+					<div class='col-sm-9'>
+						<input type='text' name='category_name' id='category_name' class='textbox' />
+					</div>
+					<div class='content_spacer'><br/></div>
+					<div class='col-sm-3'>
+							<div class='green_button' id='add_category_button'>
+								<span class='category_element'><span class='icon-plus'>&nbsp;</span>Crear</span>
+							</div>
+					</div>
+				</div>
+				{% endif %}
+			</div>
+		</div>
+		<hr/>
+		<h5><strong>Crear producto</strong></h5>
+		<div class='row'>
+			<div class='col-sm-9'>
+				<input type='text' name='product_name' id='product_name' class='textbox' />
+			</div>
+			<div class='content_spacer'><br/></div>
+			<div class='col-sm-3'>
+				<div class='green_button' id='add_product_button'>
+					<span class='category_element'><span class='icon-plus'>&nbsp;</span>Crear</span>
+				</div>
+			</div>
+		</div>
+		<hr/>
+		<div id='category_products'>
+			{% for product in pagedata.category.products %}
+				{% if loop.first %}
+					<div class='row'>
+				{% endif %}
+						<div class='col-sm-4'>
+							<div class='product'>
+								<div class='cover' style="background-image: url('{{ webroot }}images/products/{{ product.picture.file }}')">
+									<div class='actions'>
+										<div class='top'></div>
+										<div class='title' onclick="loadProduct('{{ product.shortname }}')">{{ product.name }}</div>
+										<hr/>
+										<div class='blue_button button_cart' onclick="removeProduct({{ product.id }}, '{{ product.name }}', '{{ pagedata.category.shortname }}')">
+											<span class='icon-remove'>&nbsp;</span>Eliminar
+										</div>
+										<div class='bottom'></div>
+									</div>
+								</div>
+								<div class='description'>
+									<p class='price'>{{ product.currency.symbol }} {{ product.price }}</p>
+									<p class='category' onclick="loadCategory('{{ product.category.shortname }}')">{{ product.category.name }}</p>
+								</div>
+							</div>
+						</div>
+				{% if loop.last %}
+					</div>
+				{% elseif loop.index % 3 == 0 %}
+					</div>
+					<br/>
+					<div class='row'>
+				{% endif %}
+			{% endfor %}
+		</div>
+		<hr/>
+	</div>
+	<div class='col-sm-3'>
+		<div class='green_button' id='update_category_button'>
+			<span class='category_element'><span class='icon-checkmark'>&nbsp;</span>Guardar cambios</span>
+		</div>
+		<br/>
+		<div class='blue_button' id='remove_category_button'>
+			<span class='category_element'><span class='icon-remove'>&nbsp;</span>Eliminar categoria</span>
+		</div>
+		<hr/>
+		<div id='category_image'>
+			<span id='change_button'>
+				<span class='icon-image'>&nbsp;</span>
+					{% if pagedata.category.picture != null && pagedata.category.picture != '' %}
+						Cambiar imagen de categoria (Max. 2 MB)
+					{% else %}
+						Establecer imagen de categoria (Max. 2 MB)
+					{% endif %}
+			</span>
+			<input id='fileupload' type="file" name="image" />
+			<br/><br/>
+			<div id="progress" class="progress">
+				<div id="progress-bar" class="progress-bar progress-bar-success"></div>
+			</div>
+			{% if pagedata.category.picture != null && pagedata.category.picture != '' %}
+				<img  src='{{ pagedata.webroot }}/images/category/{{ pagedata.category.picture }}' alt='' />
+			{% else %}
+				<img src='{{ pagedata.webroot }}/images/category/submenu_image_gradient.png' alt='' />
+			{% endif %}
+		</div>
+	</div>
+</div>
+</form>
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('#change_button').on('click', function(){
+			document.getElementById('fileupload').click();
+		});
+		
+		$('#add_category_button').click(createCategory);
+		$('#add_product_button').click(createProduct);
+		$('#update_category_button').click(updateCategory);
+		$('#remove_category_button').click(removeCategory);
+		
+		var tools = [
+			['Font', 'FontSize'],
+			['TextColor', 'BGColor'],
+			['Bold', 'Italic', 'Underline', '-', 'NumberedList', 'BulletedList'],
+			['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+			['Cut', 'Copy', 'Paste', 'Preview'],
+			['Undo', 'Redo', '-', 'RemoveFormat'],
+			['Table', 'HorizontalRule', 'SpecialChar']
+		]
+
+		function bindTextEditor(control) {
+			CKEDITOR.replace(control, {
+				// Define the toolbar groups as it is a more accessible solution.
+				toolbarGroups: [
+					{"name":"basicstyles","groups":["basicstyles"]},
+					{"name":"links","groups":["links"]},
+					{"name":"paragraph","groups":["list","blocks"]},
+					{"name":"document","groups":["mode"]},
+					{"name":"insert","groups":["insert"]},
+					{"name":"styles","groups":["styles"]},
+					{"name":"about","groups":["about"]}
+				],
+				// Remove the redundant buttons from toolbar groups defined above.
+				removeButtons: 'Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar'
+			});
+		}
+		
+		bindTextEditor('categoryDescription');
+		
+		$(function () {
+			'use strict';
+			
+			$('#fileupload').fileupload({
+				url: '{{ pagedata.webroot }}category_cover_change_script/{{ pagedata.category.id }}',
+				dataType: 'json',
+				acceptFileTypes: /(\.|\/)(jpg|png)$/i,
+				maxFileSize: 2097152 // 2 MB
+			}).on('fileuploadadd', function (e, data) {
+				$('#progress').fadeIn();
+			}).on('fileuploadprogressall', function (e, data) {
+				var progress = parseInt(data.loaded / data.total * 100, 10);
+				$('#progress-bar').css('width', + progress + '%');
+			}).on('fileuploadprocessalways', function (e, data) {
+				if (data.files[data.index].error) {
+					$('#progress').css('display', 'none');
+					toastr.warning(data.files[data.index].error);
+				}
+			}).on('fileuploaddone', function (e, data) {
+				if(data.result.result == 1){
+					toastr.success('Imagen actualizada')
+				}else{
+					toastr.error('Error al actualizar la imagen ' + data.result.error);
+				}
+				$('#progress-bar').css('width', '100%');
+				$('#category_image img').attr('src', '{{ pagedata.webroot }}/images/category/' + data.result.filename);
+			}).on('fileuploadfail', function (e, data) {
+				console.log(data);
+				$.each(data.files, function (index, file) {
+					console.log(file);
+				});
+			});
+		});
+	});
+	function createCategory(){
+		var categoryName = $('#category_name').val();
+		if(categoryName.length > 0){
+			doAjaxRequest('category_add_script/{{ pagedata.category.id }}', 'post', categoryName, function(response){
+				if(response.result == 1){
+					toastr.success(categoryName + ' creado');
+					loadCategory(response.alias);
+				}else{
+					toastr.error('Error al crear la categoria, por favor intentelo nuevamente');
+				}
+			});
+		}else{
+			toastr.warning('Debe especificar un titulo para la categoria');
+		}
+	}
+	function updateCategory(){
+		var categoryName = $('#categoryName').val();
+		if(categoryName.length > 0){
+			for(instance in CKEDITOR.instances){
+				CKEDITOR.instances[instance].updateElement();
+			}
+			var data = JSON.stringify($('#categoryForm').serializeObject());
+			doAjaxRequest('category_update_script/{{ pagedata.category.id }}', 'post', data, function(response){
+				if(response.result == 1){
+					toastr.success(categoryName + ' actualizado');
+					loadCategory(response.alias);
+				}else{
+					toastr.error('Error al actualizar la categoria, por favor intentelo nuevamente');
+				}
+			});
+		}else{
+			toastr.warning('Debe especificar un titulo para la categoria');
+		}
+	}
+	function removeCategory(){
+		if(confirm("Eliminar categoria {{ pagedata.category.name }}?")){
+			NProgress.start();
+			doAjaxRequest('category_remove_script/{{ pagedata.category.id }}', 'post', '', function(response){
+				if(response.result == 1){
+					toastr.success("Categoria {{ pagedata.category.name }} eliminada");
+					redirectToUrl('');
+				}else if(response.result == 2){
+					toastr.warning("No se puede eliminar la categoria {{ pagedata.category.name }} , primero debe eliminar todos las sub categorias y productos en ella");
+				}else{
+					toastr.error("Ocurrio un error al eliminar la categoria {{ pagedata.category.name }}");
+					console.log(response);
+				}
+				NProgress.done();
+			});
+		}
+	}
+	function createProduct(){
+		var productName = $('#product_name').val();
+		if(productName.length > 0){
+			doAjaxRequest('product_add_script/{{ pagedata.category.id }}', 'post', productName, function(response){
+				if(response.result == 1){
+					toastr.success(productName + ' creado');
+					loadProduct(response.alias);
+				}else{
+					toastr.error('Error al crear el producto, por favor intentelo nuevamente');
+				}
+			});
+		}else{
+			toastr.warning('Debe especificar un titulo para el producto');
+		}
+	}
+</script>

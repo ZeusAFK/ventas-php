@@ -1,0 +1,31 @@
+<table id='controls_table' border='0'>
+	<tr>
+		<td valign='top'>
+			<div id='buttons_container'>
+				<div id='cart' onclick='showShoppingCartContents();' {% if pagedata.cart.quantity > 0 %}class='full'{% endif %}>
+					<span class='icon-cart3'>&nbsp;</span>Carrito&nbsp;<span id='cart_count'>{% if pagedata.cart.quantity > 0 %}({{ pagedata.cart.quantity }}){% endif %}</span>
+				</div>
+			</div>
+		</td>
+		<td valign='top'>
+			<p id='name' onclick='loadBilling()'><span class='icon-tags'>&nbsp;</span>{{ pagedata.userinfo.name }}</p>
+			<p id='email'><span class='icon-{{ pagedata.userinfo.access_provider }}'>&nbsp;</span>{{ pagedata.userinfo.email }}</p>
+		</td>
+		<td valign='top'>
+			<div id='logout' onclick='doLogout();'>
+				<span class='icon-switch'></span>
+			</div>
+		</td>
+		<td width='75px'>
+			<img id='picture' src='{{ pagedata.userinfo.picture }}' onclick='loadBilling()' />
+		</td>
+	</tr>
+</table>
+{% if pagedata.show_admin_navigation == 1 %}
+	<script type='text/javascript' src='{{ pagedata.webroot }}js/admin.js'></script>
+{% endif %}
+<script type='text/javascript'>
+	$(document).ready(function(){
+		$('#controls_table').fadeIn();
+	});
+</script>
