@@ -9,4 +9,5 @@ Require:
   - rewrite module
 
 ZeusAFK Technologies
+
 Contact: support@zeusafk.net
