@@ -15,7 +15,7 @@
 
 	require(SCRIPTS_DIR.'functions.script.php');
 	require(SCRIPTS_DIR.'mysql_connect.script.php');
-
+	
 	$page = isset($_GET['page']) ? $_GET['page'] : 'home';
 
 	$token = isset($_POST['token']) ? $_POST['token'] === $_SESSION['TOKEN'] ? true : false : false;

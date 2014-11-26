@@ -1,7 +1,8 @@
 <?php
 	if (!defined('ROOT_ACCESS') || ROOT_ACCESS != 1) die();
 	
-	header('Content-type: application/json');
+	if(!isset($importing_module) || !$importing_module)
+		header('Content-type: application/json');
 	
 	if(isset($_SESSION['currentUser'])){
 		$orders = array();
@@ -48,5 +49,6 @@
 		$pagedata['orders'] = $orders;
 	}
 	
-	echo json_encode($pagedata, JSON_UNESCAPED_UNICODE);
+	if(!isset($importing_module) || !$importing_module)
+		echo json_encode($pagedata, JSON_UNESCAPED_UNICODE);
 ?>

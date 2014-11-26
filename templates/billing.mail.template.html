@@ -1,0 +1,83 @@
+<style>
+	body{
+		background-color: #f8f8f8;
+		background-repeat: repeat;
+		font-size: 12px;
+		padding: 1em;
+		margin: 0px;
+	}
+</style>
+<div style="
+	background: #3b5998;
+	background: linear-gradient(top,#3b5998,#163574)
+	background: -webkit-linear-gradient(top,#3b5998,#163574);
+	background: -moz-linear-gradient(top,#3b5998,#163574);
+	background: -o-linear-gradient(top,#3b5998,#163574);
+	background: -ms-linear-gradient(top,#3b5998,#163574);
+	box-shadow: 0 2px 2px 0 #aaa;
+	color: #eee;
+	height: 30px;
+	font-size: 1.7em;
+	font-weight: bold;
+	padding: 0.3em;
+">
+	Nueva orden realizada en {{ site }}
+</div>
+<br/>
+<div id='content'>
+	{% for order in orders %}
+		{% if loop.first %}
+			Se ha recibido una nueva orden en fecha {{ order.date }}, a continuaci&oacute;n se detalla el contenido de la misma:
+			<br/><br/>
+			<center>
+				<table cellpadding='5px' id='main_table'>
+					<tr>
+						<td colspan='2' align='center'><strong>INFORMACION DE CONTACTO</strong></td>
+					</tr>
+					<tr><td>&nbsp;</td></tr>
+					<tr>
+						<td><strong>Nombre:</strong></td>
+						<td>{{ user.name }}</td>
+					</tr>
+					<tr>
+						<td><strong>Correo:</strong></td>
+						<td>{{ user.email }}</td>
+					</tr>
+					<tr>
+						<td><strong>Contacto:</strong></td>
+						<td>{{ order.contact }}</td>
+					</tr>
+					<tr>
+						<td><strong>Ubicacion:</strong></td>
+						<td>{{ order.location }} ({{ order.latitude }}, {{ order.longitude }})</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td><a href='https://www.google.com/maps/@{{ order.latitude }},{{ order.longitude }},18z'>Link a ubicaci&oacute;n en Google Maps</a></td>
+					</tr>
+					<tr><td>&nbsp;</td></tr>
+					<tr>
+						<td colspan='2' align='center'><strong>CONTENIDO DE LA ORDEN</strong></td>
+					</tr>
+					<tr><td>&nbsp;</td></tr>
+					<tr>
+						<td colspan='2'>
+							<table style='width:100%;'>
+								<tr>
+									<td><strong>Producto</strong></td>
+									<td align='right'><strong>Cantidad</strong></td>
+								</tr>
+								{% for product in order.products %}
+									<tr>
+										<td><a href='{{ webroot }}product/{{ product.shortname }}'>{{ product.name }}</a></td>
+										<td align='right'>{{ product.quantity }}</td>
+									</tr>
+								{% endfor %}
+							</table>
+						</td>
+					</tr>
+				</table>
+			</center>
+		{% endif %}
+	{% endfor %}
+</div>

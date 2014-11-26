@@ -7,11 +7,11 @@
 	$config['DB']['PORT'] = '3306';
 	$config['DB']['USR'] = 'root';
 	$config['DB']['PSW'] = '';
-	$config['DB']['NAME'] = 'ventas 20141021';
+	$config['DB']['NAME'] = 'ventas_20141121';
 	
 	// SITE CONFIGURATION
 
-	$config['SITE']['TITLE'] = 'Sistema de ventas online';
+	$config['SITE']['TITLE'] = '';
 	$config['SITE']['VERSION'] = '1.0';
 	$config['SITE']['DESCRIPTION'] = '';
 	$config['SITE']['DEBUG'] = TRUE;
@@ -19,17 +19,28 @@
 	$config['SITE']['WEBHOST'] = 'localhost';
 	$config['SITE']['PATHROOT'] = '/ventas/';
 	$config['SITE']['CACHE_TIME'] = 1200;
+	
+	// MAIL SMTP CONFIGURATION
+	
+	$config['MAIL']['HOST'] = 'localhost';
+	$config['MAIL']['PORT'] = 465;
+	$config['MAIL']['AUTH'] = TRUE;
+	$config['MAIL']['SECURE'] = TRUE;
+	$config['MAIL']['USER'] = 'noreply@domain.com';
+	$config['MAIL']['PASSWORD'] = '';
+	$config['MAIL']['NAME'] = 'Store';
 
 	// LOGIN CONFIGURATION
 
 	$config['LOGIN']['SHA1'] = TRUE;
 	$config['LOGIN']['USE_SEED'] = TRUE;
-	$config['LOGIN']['SEED'] = 'xxxxxxxxxx-xxxxxxxxx-xxxxxxxxxxx-xxxxxxxxxx';
-	$config['LOGIN']['GOOGLE']['CLIENT_ID'] = 'xxxxxxxx-xxxxxxxxxxxxxxxxxxxxxxxxxxxx.apps.googleusercontent.com';
-	$config['LOGIN']['GOOGLE']['CLIENT_SECRET'] = 'xxxxxxxxxxxxxxxxxxxxx';
-	$config['LOGIN']['FACEBOOK']['CLIENT_ID'] = 'xxxxxxxxxxxxxxx';
-	$config['LOGIN']['FACEBOOK']['CLIENT_SECRET'] = 'xxxxxxxxxxxxxxxxxxxxxx';
+	$config['LOGIN']['SEED'] = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx';
+	$config['LOGIN']['GOOGLE']['CLIENT_ID'] = 'xxxxxxxxxxxxxx-xxxxxxxxxxxxx.apps.googleusercontent.com';
+	$config['LOGIN']['GOOGLE']['CLIENT_SECRET'] = 'xxxxxxxx_xxx_xxxxxx';
+	$config['LOGIN']['FACEBOOK']['CLIENT_ID'] = 'xxxxxxxxxx';
+	$config['LOGIN']['FACEBOOK']['CLIENT_SECRET'] = 'xxxxxxxxxxxxxxxxxxxxxxxxxxx';
 	
 	// IMPLEMENTATION CONSTRAINTS
 	$config['SITE']['WEBROOT'] = (isset($_SERVER['HTTPS']) ? 'https' : 'http').'://'.(preg_match('/www/', $_SERVER['HTTP_HOST']) ? 'www.' : '').$config['SITE']['WEBHOST'].$config['SITE']['PATHROOT'];
+	$config['free_mysql_result'] = FALSE;
 ?>
