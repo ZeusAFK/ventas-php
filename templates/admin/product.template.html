@@ -53,6 +53,11 @@
 					{% if picture != null %}
 						<div class='picture'>
 							<img class='image' src='{{ webroot }}images/products/{{ picture.file }} ' onclick='changePicture(this)'/>
+							<center>
+								<span class='pointer' onclick='removePicture({{ picture.id }})'>
+									<span class='icon-remove red'>&nbsp;</span>Eliminar
+								</span>
+							</center>
 						</div>
 					{% endif %}
 				{% endfor %}
@@ -160,10 +165,10 @@
 			});
 		});
 	});
-	
 	function updateProduct(){
 		var productName = $('#productName').val();
 		if(productName.length > 0){
+			NProgress.start();
 			for(instance in CKEDITOR.instances){
 				CKEDITOR.instances[instance].updateElement();
 			}
@@ -176,13 +181,28 @@
 				}else{
 					toastr.error('Error al actualizar el producto, por favor intentelo nuevamente');
 				}
+				NProgress.done();
 			});
 		}else{
 			toastr.warning('Debe especificar un titulo para el producto');
 		}
 	}
-	
 	function changePicture(image){
 		$('#main_image').attr('src', $(image).attr('src'));
+	}
+	function removePicture(image){
+		if(confirm('Eliminar imagen?')){
+			NProgress.start();
+			doAjaxRequest('product_image_remove_script/' + image, 'post', '', function(response){
+				if(response.result == 1){
+					toastr.success('Imagen eliminada');
+					loadProduct("{{ pagedata.product.shortname }}");
+				}else{
+					console.log(response);
+					toastr.error('Error al eliminar la imagen, por favor intentelo nuevamente');
+				}
+				NProgress.done();
+			});
+		}
 	}
 </script>

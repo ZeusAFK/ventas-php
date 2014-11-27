@@ -156,6 +156,8 @@
 			require(SCRIPTS_DIR.'product.add.script.php'); break;
 		case 'product_image_add_script':
 			require(SCRIPTS_DIR.'product.image.add.script.php'); break;
+		case 'product_image_remove_script':
+			require(SCRIPTS_DIR.'product.image.remove.script.php'); break;
 		case 'product_update_script':
 			require(SCRIPTS_DIR.'product.update.script.php'); break;
 		case 'product_remove_script':
