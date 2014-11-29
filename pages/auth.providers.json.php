@@ -3,8 +3,6 @@
 	
 	header('Content-type: application/json');
 	
-	$pagedata = array();
-	
 	$providers = array();
 	
 	$importing_module = TRUE;

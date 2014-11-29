@@ -118,6 +118,8 @@
 			require(PAGES_DIR.'cart.json.php'); break;
 		case 'billing_json':
 			require(PAGES_DIR.'billing.json.php'); break;
+		case 'tos_json':
+			require(PAGES_DIR.'tos.json.php'); break;
 		case 'products_most_viewed_json':
 			require(PAGES_DIR.'products.most.viewed.json.php'); break;
 		case 'products_news_json':
@@ -164,6 +166,8 @@
 			require(SCRIPTS_DIR.'product.remove.script.php'); break;
 		case 'slider_image_change_script':
 			require(SCRIPTS_DIR.'slider.image.change.script.php'); break;
+		case 'tos_update_script':
+			require(SCRIPTS_DIR.'tos.update.script.php'); break;
 		case 'logout':{
 			foreach($_SESSION as $k => $v)
 				unset($_SESSION[$k]);

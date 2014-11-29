@@ -240,6 +240,7 @@ ol,ul{list-style:none;margin:0;padding:0}
 #content #shop_content #category_products .product .cover .actions .title{font-size:1.2em}
 #content #shop_content .main_slider .slider_element{-webkit-background-size:cover;-moz-background-size:cover;-o-background-size:cover;background-size:cover;color:#fafafa;height:480px;padding:1em;}
 #content #shop_content .main_slider .slider_element .change_button{max-width:300px}
+#content .box_white{background:#fff;border:1px solid #eaeaea;-webkit-border-radius:5px 5px 5px 5px;-moz-border-radius:5px 5px 5px 5px;border-radius:5px 5px 5px 5px;color:#333;margin:10px 0;padding:10px;width:100%}
 #header_container{position:fixed;width:100%;z-index:999;}
 #header_container #header{background:#3b5998;background:-webkit-linear-gradient(top,#3b5998,#163574);background:-moz-linear-gradient(top,#3b5998,#163574);background:-o-linear-gradient(top,#3b5998,#163574);background:-ms-linear-gradient(top,#3b5998,#163574);box-shadow:0 2px 2px 0 #aaa;color:#eee;height:40px;}
 #header_container #header #header_content{display:none}

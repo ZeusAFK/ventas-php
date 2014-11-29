@@ -361,6 +361,16 @@ function loadBilling(){
 		NProgress.done();
 	});
 }
+function loadTermsOfService(){
+	NProgress.start();
+	Backbone.history.navigate('tos');
+	doAjaxRequest('tos_json', 'post', '', function(pagedata){
+		var template = swig.compile(tpl.get('tos'));
+		$('#content').html(template({ pagedata: pagedata}));
+		$('#content').fadeIn();
+		NProgress.done();
+	});
+}
 function doLogout(){
 	if(confirm('Cerra sesion?')){
 		redirectToUrl('logout');
@@ -374,6 +384,7 @@ var AppRouter = Backbone.Router.extend({
 		'cart'					:	'cart',
 		'news'					:	'news',
 		'billing'				:	'billing',
+		'tos'					:	'tos',
 		'*path'					:	'shop'
 	},
 	shop: function() {
@@ -396,6 +407,9 @@ var AppRouter = Backbone.Router.extend({
 	},
 	billing: function(){
 		loadBilling();
+	},
+	tos: function(){
+		loadTermsOfService();
 	}
 });
 
@@ -410,7 +424,8 @@ tpl.loadTemplates([
 	'authentication',
 	'cart',
 	'news',
-	'billing'
+	'billing',
+	'tos'
 ], function(){
 	usernav_template = tpl.get('usernav');
 	app = new AppRouter();

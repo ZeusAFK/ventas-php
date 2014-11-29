@@ -1,0 +1,59 @@
+<div id='nav_path'>
+	<span class='nav_element' onclick="redirectToUrl('');">
+		<span class='icon-cart3'>&nbsp;</span>Tienda
+	</span>
+	<span class='icon-play2 nav_arrow'></span>
+	<span>Terminos y condiciones del servicio</span>
+</div>
+<br/>
+<h3><span class='icon-notification'>&nbsp;</span>Terminos y condiciones del servicio</h3>
+<hr/>
+<div class='box_white'>
+	<form id='tos_form' method='post'>
+		<textarea name='tos_text' class='textbox align_left'>{{ pagedata.tos_text|raw }}</textarea>
+	</form>
+</div>
+<div class='row'>
+	<div class='content_spacer'><br/></div>
+	<div class='col-sm-3 col-sm-offset-9'>
+		<div class='green_button' id='save_tos_button'>
+			<span class='category_element'><span class='icon-checkmerk'>&nbsp;</span>Guardar cambios</span>
+		</div>
+	</div>
+</div>
+<script type='text/javascript'>
+	$(document).ready(function(){
+		function bindTextEditor(control) {
+			CKEDITOR.replace(control, {
+				toolbarGroups: [
+					{"name":"basicstyles","groups":["basicstyles"]},
+					{"name":"links","groups":["links"]},
+					{"name":"paragraph","groups":["list","blocks"]},
+					{"name":"document","groups":["mode"]},
+					{"name":"insert","groups":["insert"]},
+					{"name":"styles","groups":["styles"]}
+				],
+				removeButtons: 'Underline,Strike,Subscript,Superscript,Anchor,Styles,Specialchar'
+			});
+		}
+		bindTextEditor('tos_text');
+		$('#save_tos_button').click(saveTosText);
+	});
+	
+	function saveTosText(){
+		NProgress.start();
+		for(instance in CKEDITOR.instances){
+			CKEDITOR.instances[instance].updateElement();
+		}
+		var data = JSON.stringify($('#tos_form').serializeObject());
+		doAjaxRequest('tos_update_script', 'post', data, function(response){
+			if(response.result == 1){
+				toastr.success('Cambios guardados correctamenete');
+			}else{
+				toastr.warning('Ocurrio un error al guardar los cambios, por favor intente nuevamente');
+				console.log(response);
+			}
+			NProgress.done();
+		});
+	}
+</script>
