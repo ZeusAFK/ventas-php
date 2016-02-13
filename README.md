@@ -1,7 +1,7 @@
 ventas-php
 ==========
 
-DEMO: http://www.zeusafk.net/projects/ventas/
+DEMO: http://store.zeusafk.net
 
 Require:
   - Apache/2.2.27
